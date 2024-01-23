@@ -4,7 +4,7 @@ import { PortableText, PortableTextComponents } from '@portabletext/react'
 import { groq } from 'next-sanity'
 import React from 'react'
 
-export const components : PortableTextComponents = {
+ const components : PortableTextComponents = {
   block: {
     // Ex. 1: customizing common block types
     h1: ({children}) => (

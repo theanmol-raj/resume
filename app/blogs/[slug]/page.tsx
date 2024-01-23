@@ -1,9 +1,78 @@
 import React from 'react'
-import {components} from '@/app/projects/[slug]/page'
 import { client } from '@/sanityClient'
 import { groq } from 'next-sanity'
 import { urlForImage } from '@/sanity/lib/image'
-import { PortableText } from '@portabletext/react'
+import { PortableText, PortableTextComponents } from '@portabletext/react'
+
+
+const components : PortableTextComponents = {
+  block: {
+    // Ex. 1: customizing common block types
+    h1: ({children}) => (
+      <h1 className="text-3xl my-3 font-bold">{children}</h1>
+    ),
+    h2: ({children}) => (
+      <h2 className="text-2xl my-5 font-semibold">{children}</h2>
+    ),
+    h3: ({children}) => (
+      <h3 className="text-xl my-5 font-medium">{children}</h3>
+    ),
+    h4: ({children}) => (
+      <h4 className="text-lg my-5 font-normal">{children}</h4>
+    ),
+    normal: ({children}) => (
+      <p className="  my-5 dark:text-gray-300 ">{children}</p>
+    ),
+    blockquote: ({children} ) => <blockquote className="border-l-purple-500">{children}</blockquote>,
+
+    // Ex. 2: rendering custom styles
+    customHeading: ({children} ) => (
+      <h2 className="text-lg text-primary text-purple-700">{children}</h2>
+    ),
+  },
+  list: {
+    // Ex. 1: customizing common list types
+    bullet: ({children}) => <ul className="mt-xl">{children}</ul>,
+    number: ({children}) => <ol className="mt-lg">{children}</ol>,
+
+    // Ex. 2: rendering custom lists
+    checkmarks: ({children}) => <ol className="m-auto text-lg">{children}</ol>,
+  },
+  listItem: {
+    // Ex. 1: customizing common list types
+    bullet: ({children}) => <li style={{listStyleType: 'disclosure-closed'}}>{children}</li>,
+
+    // Ex. 2: rendering custom list items
+    checkmarks: ({children}) => <li>✅ {children}</li>,
+  },
+  marks: {
+    // Ex. 1: custom renderer for the em / italics decorator
+    em: ({children}:{children : React.ReactNode}) => <em className="text-gray-600 font-semibold">{children}</em>,
+    
+    // Ex. 2: rendering a custom `link` annotation
+    link: ({value, children} :any) => {
+      const target = (value?.href || '').startsWith('http') ? '_blank' : undefined
+      return (
+        <a href={value?.href} target={target}>
+          {children}
+        </a>
+      )
+    },
+  },
+  types: {
+    image: ({value} : { value : { imageUrl : string}}) => <img src={value.imageUrl} />,
+    callToAction: ({value, isInline} : { value : { url : string , text : string } , isInline : boolean}) =>
+      isInline ? (
+        <a href={value.url}>{value.text}</a>
+      ) : (
+        <div className="callToAction">{value.text}</div>
+      ),
+  },
+
+}
+
+
+
 
 async function page({params}:  { 
   params : { slug : string}
